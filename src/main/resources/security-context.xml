@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+        xmlns="http://www.springframework.org/schema/security"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xsi:schemaLocation="
+      http://www.springframework.org/schema/security 
+      http://www.springframework.org/schema/security/spring-security-3.2.xsd
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <global-method-security pre-post-annotations="enabled" proxy-target-class="true">
+        <expression-handler ref="expressionHandler" />
+    </global-method-security>
+
+    <beans:bean id="permissionEvaluator" class="uss.coi.cop.foundation.security.BasePermissionEvaluator"/>
+
+    <beans:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"
+                p:permissionEvaluator-ref="permissionEvaluator"/>
+
+    <beans:bean id="corsHandler" class="uss.coi.cop.foundation.filter.CorsFilter"/>
+
+    <beans:bean id="certificateProcessingFilter" class="uss.coi.cop.foundation.security.certs.CertificateAuthenticationProcessingFilter">
+        <beans:property name="authenticationFailureHandler" ref="failureHandler" />
+        <beans:property name="authenticationSuccessHandler" ref="successHandler" />
+        <beans:property name="authenticationManager" ref="authManager" />
+    </beans:bean>
+
+    <http entry-point-ref="restAuthenticationEntryPoint" use-expressions="true">
+
+        <intercept-url pattern="/api/**" access="isAuthenticated()"/>
+
+        <form-login
+                authentication-success-handler-ref="successHandler"
+                authentication-failure-handler-ref="failureHandler"/>
+        <logout />
+
+        <custom-filter ref="corsHandler" after="PRE_AUTH_FILTER"/>
+        <custom-filter ref="certificateProcessingFilter" after="X509_FILTER"/>
+        <custom-filter ref="corsHandler" before="LOGOUT_FILTER"/>
+        <logout logout-success-url="/" success-handler-ref="logoutHandler" />
+    </http>
+
+    <beans:bean id="restAuthenticationEntryPoint"
+                class="uss.coi.cop.foundation.security.RestAuthenticationEntryPoint"/>
+    <beans:bean id="successHandler"
+                class="uss.coi.cop.foundation.security.JsonAPIAuthSuccess"/>
+    <beans:bean id="failureHandler"
+                class="uss.coi.cop.foundation.security.JsonAPIAuthFail"/>
+    <beans:bean id="authProvider"
+                class="uss.coi.cop.foundation.security.CustomAuthenticationProvider"/>
+
+    <authentication-manager alias="authManager">
+        <authentication-provider ref="authProvider" />
+    </authentication-manager>
+
+</beans:beans>
