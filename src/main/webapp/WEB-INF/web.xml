@@ -7,8 +7,6 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:security-context.xml
-            classpath:foundation-context.xml
             classpath:servlet-context.xml
         </param-value>
     </context-param>
@@ -25,8 +23,6 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                classpath:security-context.xml
-                classpath:foundation-context.xml
                 classpath:servlet-context.xml
             </param-value>
         </init-param>
@@ -37,16 +33,6 @@
         <servlet-name>appServlet</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
@@ -72,15 +58,5 @@
             <http-only>false</http-only>
         </cookie-config>
     </session-config>
-
-    <filter>
-        <filter-name>CorsFilter</filter-name>
-        <filter-class>uss.coi.cop.foundation.filter.CorsFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>CorsFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 
 </web-app>

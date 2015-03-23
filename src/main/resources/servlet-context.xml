@@ -37,6 +37,6 @@
         <beans:property name="objectMapper" ref="objectMapper"/>
     </beans:bean>
 
-    <context:component-scan base-package="uss.coi.cop.app.controllers" />
+    <context:component-scan base-package="com.askokov.controller" />
 
 </beans:beans>
